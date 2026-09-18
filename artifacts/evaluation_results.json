@@ -1,0 +1,571 @@
+[
+  {
+    "case_id": "PUB-001",
+    "decision": "NEEDS_REVIEW",
+    "reasons": [
+      "The inpatient treatment satisfies the 24-hour threshold, but admissibility, medical necessity, and expense limits require verification."
+    ],
+    "required_checks": [
+      "Confirm hospital registration.",
+      "Confirm medical necessity."
+    ],
+    "elapsed_policy_days": 437,
+    "elapsed_policy_months": 14,
+    "coverage_months": 14,
+    "prior_coverage_months": 0,
+    "effective_coverage_months": 14,
+    "domiciliary_sublimit_percent": 20,
+    "domiciliary_sublimit_amount_inr": null,
+    "expense_summary": {
+      "total_claimed_inr": 163200,
+      "expense_breakdown_inr": {
+        "room": 30000,
+        "doctor_fees": 30000,
+        "medicines_diagnostics": 90000,
+        "pre_hospitalization": 5000,
+        "post_hospitalization": 7000,
+        "ambulance": 1200
+      },
+      "domiciliary_sublimit_percent": null,
+      "domiciliary_sublimit_amount_inr": null,
+      "provisional_payable_inr": null,
+      "deductions_inr": null,
+      "note": "This is an expense summary only. Final payable amount and deductions require verification of policy limits, admissibility, documents, and medical evidence."
+    }
+  },
+  {
+    "case_id": "PUB-002",
+    "decision": "REJECT",
+    "reasons": [
+      "The claim date falls within the initial 30-day waiting period."
+    ],
+    "required_checks": [
+      "Confirm hospital registration.",
+      "Confirm medical necessity."
+    ],
+    "elapsed_policy_days": 19,
+    "elapsed_policy_months": 0,
+    "coverage_months": 0,
+    "prior_coverage_months": 0,
+    "effective_coverage_months": 0,
+    "domiciliary_sublimit_percent": 20,
+    "domiciliary_sublimit_amount_inr": null,
+    "expense_summary": {
+      "total_claimed_inr": 70000,
+      "expense_breakdown_inr": {
+        "room": 20000,
+        "doctor_fees": 20000,
+        "medicines_diagnostics": 30000,
+        "pre_hospitalization": 0,
+        "post_hospitalization": 0,
+        "ambulance": 0
+      },
+      "domiciliary_sublimit_percent": null,
+      "domiciliary_sublimit_amount_inr": null,
+      "provisional_payable_inr": null,
+      "deductions_inr": null,
+      "note": "This is an expense summary only. Final payable amount and deductions require verification of policy limits, admissibility, documents, and medical evidence."
+    }
+  },
+  {
+    "case_id": "PUB-003",
+    "decision": "REJECT",
+    "reasons": [
+      "The condition is marked pre-existing and the effective continuous coverage period is below 48 months."
+    ],
+    "required_checks": [
+      "Confirm hospital registration.",
+      "Confirm medical necessity."
+    ],
+    "elapsed_policy_days": 830,
+    "elapsed_policy_months": 27,
+    "coverage_months": 27,
+    "prior_coverage_months": 0,
+    "effective_coverage_months": 27,
+    "domiciliary_sublimit_percent": 20,
+    "domiciliary_sublimit_amount_inr": null,
+    "expense_summary": {
+      "total_claimed_inr": 142000,
+      "expense_breakdown_inr": {
+        "room": 20000,
+        "doctor_fees": 35000,
+        "medicines_diagnostics": 70000,
+        "pre_hospitalization": 8000,
+        "post_hospitalization": 9000,
+        "ambulance": 0
+      },
+      "domiciliary_sublimit_percent": null,
+      "domiciliary_sublimit_amount_inr": null,
+      "provisional_payable_inr": null,
+      "deductions_inr": null,
+      "note": "This is an expense summary only. Final payable amount and deductions require verification of policy limits, admissibility, documents, and medical evidence."
+    }
+  },
+  {
+    "case_id": "PUB-004",
+    "decision": "NEEDS_REVIEW",
+    "reasons": [
+      "The claim describes domiciliary treatment. Verify the medical evidence, medical necessity, applicable policy limits, and supporting documents before determining the payable amount."
+    ],
+    "required_checks": [
+      "Confirm hospital registration.",
+      "Confirm medical necessity."
+    ],
+    "elapsed_policy_days": 858,
+    "elapsed_policy_months": 28,
+    "coverage_months": 28,
+    "prior_coverage_months": 0,
+    "effective_coverage_months": 28,
+    "domiciliary_sublimit_percent": 20,
+    "domiciliary_sublimit_amount_inr": null,
+    "expense_summary": {
+      "total_claimed_inr": 105000,
+      "expense_breakdown_inr": {
+        "room": 0,
+        "doctor_fees": 25000,
+        "medicines_diagnostics": 80000,
+        "pre_hospitalization": 0,
+        "post_hospitalization": 0,
+        "ambulance": 0
+      },
+      "domiciliary_sublimit_percent": 20,
+      "domiciliary_sublimit_amount_inr": 100000.0,
+      "provisional_payable_inr": null,
+      "deductions_inr": null,
+      "note": "This is an expense summary only. Final payable amount and deductions require verification of policy limits, admissibility, documents, and medical evidence."
+    }
+  },
+  {
+    "case_id": "PUB-005",
+    "decision": "NEEDS_REVIEW",
+    "reasons": [
+      "Verify that the procedure is a listed eligible day-care procedure and is not ordinary outpatient treatment."
+    ],
+    "required_checks": [
+      "Confirm hospital registration.",
+      "Confirm medical necessity."
+    ],
+    "elapsed_policy_days": 892,
+    "elapsed_policy_months": 29,
+    "coverage_months": 29,
+    "prior_coverage_months": 0,
+    "effective_coverage_months": 29,
+    "domiciliary_sublimit_percent": 20,
+    "domiciliary_sublimit_amount_inr": null,
+    "expense_summary": {
+      "total_claimed_inr": 65000,
+      "expense_breakdown_inr": {
+        "room": 0,
+        "doctor_fees": 15000,
+        "medicines_diagnostics": 45000,
+        "pre_hospitalization": 2000,
+        "post_hospitalization": 3000,
+        "ambulance": 0
+      },
+      "domiciliary_sublimit_percent": null,
+      "domiciliary_sublimit_amount_inr": null,
+      "provisional_payable_inr": null,
+      "deductions_inr": null,
+      "note": "This is an expense summary only. Final payable amount and deductions require verification of policy limits, admissibility, documents, and medical evidence."
+    }
+  },
+  {
+    "case_id": "PUB-006",
+    "decision": "NEEDS_REVIEW",
+    "reasons": [
+      "The inpatient treatment satisfies the 24-hour threshold, but admissibility, medical necessity, and expense limits require verification."
+    ],
+    "required_checks": [
+      "Confirm hospital registration.",
+      "Confirm medical necessity."
+    ],
+    "elapsed_policy_days": 914,
+    "elapsed_policy_months": 30,
+    "coverage_months": 30,
+    "prior_coverage_months": 0,
+    "effective_coverage_months": 30,
+    "domiciliary_sublimit_percent": 20,
+    "domiciliary_sublimit_amount_inr": null,
+    "expense_summary": {
+      "total_claimed_inr": 160500,
+      "expense_breakdown_inr": {
+        "room": 30000,
+        "doctor_fees": 20000,
+        "medicines_diagnostics": 100000,
+        "pre_hospitalization": 4000,
+        "post_hospitalization": 6000,
+        "ambulance": 500
+      },
+      "domiciliary_sublimit_percent": null,
+      "domiciliary_sublimit_amount_inr": null,
+      "provisional_payable_inr": null,
+      "deductions_inr": null,
+      "note": "This is an expense summary only. Final payable amount and deductions require verification of policy limits, admissibility, documents, and medical evidence."
+    }
+  },
+  {
+    "case_id": "PUB-007",
+    "decision": "NEEDS_REVIEW",
+    "reasons": [
+      "The inpatient treatment satisfies the 24-hour threshold, but admissibility, medical necessity, and expense limits require verification."
+    ],
+    "required_checks": [
+      "Confirm hospital registration.",
+      "Confirm medical necessity."
+    ],
+    "elapsed_policy_days": 957,
+    "elapsed_policy_months": 31,
+    "coverage_months": 31,
+    "prior_coverage_months": 0,
+    "effective_coverage_months": 31,
+    "domiciliary_sublimit_percent": 20,
+    "domiciliary_sublimit_amount_inr": null,
+    "expense_summary": {
+      "total_claimed_inr": 906500,
+      "expense_breakdown_inr": {
+        "room": 80000,
+        "doctor_fees": 300000,
+        "medicines_diagnostics": 500000,
+        "pre_hospitalization": 10000,
+        "post_hospitalization": 15000,
+        "ambulance": 1500
+      },
+      "domiciliary_sublimit_percent": null,
+      "domiciliary_sublimit_amount_inr": null,
+      "provisional_payable_inr": null,
+      "deductions_inr": null,
+      "note": "This is an expense summary only. Final payable amount and deductions require verification of policy limits, admissibility, documents, and medical evidence."
+    }
+  },
+  {
+    "case_id": "PUB-008",
+    "decision": "NEEDS_REVIEW",
+    "reasons": [
+      "The inpatient treatment satisfies the 24-hour threshold, but admissibility, medical necessity, and expense limits require verification."
+    ],
+    "required_checks": [
+      "Confirm hospital registration.",
+      "Confirm medical necessity."
+    ],
+    "elapsed_policy_days": 975,
+    "elapsed_policy_months": 32,
+    "coverage_months": 32,
+    "prior_coverage_months": 0,
+    "effective_coverage_months": 32,
+    "domiciliary_sublimit_percent": 20,
+    "domiciliary_sublimit_amount_inr": null,
+    "expense_summary": {
+      "total_claimed_inr": 60000,
+      "expense_breakdown_inr": {
+        "room": 10000,
+        "doctor_fees": 20000,
+        "medicines_diagnostics": 30000,
+        "pre_hospitalization": 0,
+        "post_hospitalization": 0,
+        "ambulance": 0
+      },
+      "domiciliary_sublimit_percent": null,
+      "domiciliary_sublimit_amount_inr": null,
+      "provisional_payable_inr": null,
+      "deductions_inr": null,
+      "note": "This is an expense summary only. Final payable amount and deductions require verification of policy limits, admissibility, documents, and medical evidence."
+    }
+  },
+  {
+    "case_id": "PUB-009",
+    "decision": "NEEDS_REVIEW",
+    "reasons": [
+      "The inpatient treatment satisfies the 24-hour threshold, but admissibility, medical necessity, and expense limits require verification."
+    ],
+    "required_checks": [
+      "Confirm hospital registration.",
+      "Confirm medical necessity."
+    ],
+    "elapsed_policy_days": 983,
+    "elapsed_policy_months": 32,
+    "coverage_months": 32,
+    "prior_coverage_months": 0,
+    "effective_coverage_months": 32,
+    "domiciliary_sublimit_percent": 20,
+    "domiciliary_sublimit_amount_inr": null,
+    "expense_summary": {
+      "total_claimed_inr": 186800,
+      "expense_breakdown_inr": {
+        "room": 15000,
+        "doctor_fees": 50000,
+        "medicines_diagnostics": 100000,
+        "pre_hospitalization": 9000,
+        "post_hospitalization": 12000,
+        "ambulance": 800
+      },
+      "domiciliary_sublimit_percent": null,
+      "domiciliary_sublimit_amount_inr": null,
+      "provisional_payable_inr": null,
+      "deductions_inr": null,
+      "note": "This is an expense summary only. Final payable amount and deductions require verification of policy limits, admissibility, documents, and medical evidence."
+    }
+  },
+  {
+    "case_id": "PUB-010",
+    "decision": "NEEDS_REVIEW",
+    "reasons": [
+      "Verify that the procedure is a listed eligible day-care procedure and is not ordinary outpatient treatment."
+    ],
+    "required_checks": [
+      "Confirm hospital registration.",
+      "Confirm medical necessity."
+    ],
+    "elapsed_policy_days": 247,
+    "elapsed_policy_months": 8,
+    "coverage_months": 8,
+    "prior_coverage_months": 12,
+    "effective_coverage_months": 20,
+    "domiciliary_sublimit_percent": 20,
+    "domiciliary_sublimit_amount_inr": null,
+    "expense_summary": {
+      "total_claimed_inr": 80000,
+      "expense_breakdown_inr": {
+        "room": 0,
+        "doctor_fees": 20000,
+        "medicines_diagnostics": 60000,
+        "pre_hospitalization": 0,
+        "post_hospitalization": 0,
+        "ambulance": 0
+      },
+      "domiciliary_sublimit_percent": null,
+      "domiciliary_sublimit_amount_inr": null,
+      "provisional_payable_inr": null,
+      "deductions_inr": null,
+      "note": "This is an expense summary only. Final payable amount and deductions require verification of policy limits, admissibility, documents, and medical evidence."
+    }
+  },
+  {
+    "case_id": "PUB-011",
+    "decision": "NEEDS_REVIEW",
+    "reasons": [
+      "The inpatient treatment satisfies the 24-hour threshold, but admissibility, medical necessity, and expense limits require verification."
+    ],
+    "required_checks": [
+      "Confirm hospital registration.",
+      "Confirm medical necessity."
+    ],
+    "elapsed_policy_days": 985,
+    "elapsed_policy_months": 32,
+    "coverage_months": 32,
+    "prior_coverage_months": 0,
+    "effective_coverage_months": 32,
+    "domiciliary_sublimit_percent": 20,
+    "domiciliary_sublimit_amount_inr": null,
+    "expense_summary": {
+      "total_claimed_inr": 100000,
+      "expense_breakdown_inr": {
+        "room": 15000,
+        "doctor_fees": 25000,
+        "medicines_diagnostics": 60000,
+        "pre_hospitalization": 0,
+        "post_hospitalization": 0,
+        "ambulance": 0
+      },
+      "domiciliary_sublimit_percent": null,
+      "domiciliary_sublimit_amount_inr": null,
+      "provisional_payable_inr": null,
+      "deductions_inr": null,
+      "note": "This is an expense summary only. Final payable amount and deductions require verification of policy limits, admissibility, documents, and medical evidence."
+    }
+  },
+  {
+    "case_id": "PUB-012",
+    "decision": "REJECT",
+    "reasons": [
+      "The treatment is marked as experimental. Verify the policy's experimental-treatment exclusion."
+    ],
+    "required_checks": [
+      "Confirm hospital registration.",
+      "Confirm medical necessity."
+    ],
+    "elapsed_policy_days": 986,
+    "elapsed_policy_months": 32,
+    "coverage_months": 32,
+    "prior_coverage_months": 0,
+    "effective_coverage_months": 32,
+    "domiciliary_sublimit_percent": 20,
+    "domiciliary_sublimit_amount_inr": null,
+    "expense_summary": {
+      "total_claimed_inr": 140000,
+      "expense_breakdown_inr": {
+        "room": 20000,
+        "doctor_fees": 30000,
+        "medicines_diagnostics": 90000,
+        "pre_hospitalization": 0,
+        "post_hospitalization": 0,
+        "ambulance": 0
+      },
+      "domiciliary_sublimit_percent": null,
+      "domiciliary_sublimit_amount_inr": null,
+      "provisional_payable_inr": null,
+      "deductions_inr": null,
+      "note": "This is an expense summary only. Final payable amount and deductions require verification of policy limits, admissibility, documents, and medical evidence."
+    }
+  },
+  {
+    "case_id": "CUSTOM-001",
+    "decision": "NEEDS_REVIEW",
+    "reasons": [
+      "The inpatient treatment satisfies the 24-hour threshold, but admissibility, medical necessity, and expense limits require verification."
+    ],
+    "required_checks": [],
+    "elapsed_policy_days": 380,
+    "elapsed_policy_months": 12,
+    "coverage_months": 12,
+    "prior_coverage_months": 0,
+    "effective_coverage_months": 12,
+    "domiciliary_sublimit_percent": 20,
+    "domiciliary_sublimit_amount_inr": null,
+    "expense_summary": {
+      "total_claimed_inr": 51000,
+      "expense_breakdown_inr": {
+        "room": 20000,
+        "doctor_fees": 15000,
+        "medicines_diagnostics": 10000,
+        "pre_hospitalization": 2000,
+        "post_hospitalization": 3000,
+        "ambulance": 1000
+      },
+      "domiciliary_sublimit_percent": null,
+      "domiciliary_sublimit_amount_inr": null,
+      "provisional_payable_inr": null,
+      "deductions_inr": null,
+      "note": "This is an expense summary only. Final payable amount and deductions require verification of policy limits, admissibility, documents, and medical evidence."
+    }
+  },
+  {
+    "case_id": "CUSTOM-002",
+    "decision": "REJECT",
+    "reasons": [
+      "The claim date falls within the initial 30-day waiting period."
+    ],
+    "required_checks": [
+      "Confirm hospital registration.",
+      "Confirm medical necessity."
+    ],
+    "elapsed_policy_days": 9,
+    "elapsed_policy_months": 0,
+    "coverage_months": 0,
+    "prior_coverage_months": 0,
+    "effective_coverage_months": 0,
+    "domiciliary_sublimit_percent": 20,
+    "domiciliary_sublimit_amount_inr": null,
+    "expense_summary": {
+      "total_claimed_inr": 0,
+      "expense_breakdown_inr": {
+        "room": 0,
+        "doctor_fees": 0,
+        "medicines_diagnostics": 0,
+        "pre_hospitalization": 0,
+        "post_hospitalization": 0,
+        "ambulance": 0
+      },
+      "domiciliary_sublimit_percent": null,
+      "domiciliary_sublimit_amount_inr": null,
+      "provisional_payable_inr": null,
+      "deductions_inr": null,
+      "note": "This is an expense summary only. Final payable amount and deductions require verification of policy limits, admissibility, documents, and medical evidence."
+    }
+  },
+  {
+    "case_id": "CUSTOM-003",
+    "decision": "NEEDS_REVIEW",
+    "reasons": [
+      "The claim describes domiciliary treatment. Verify the medical evidence, medical necessity, applicable policy limits, and supporting documents before determining the payable amount."
+    ],
+    "required_checks": [],
+    "elapsed_policy_days": 1841,
+    "elapsed_policy_months": 60,
+    "coverage_months": 60,
+    "prior_coverage_months": 0,
+    "effective_coverage_months": 60,
+    "domiciliary_sublimit_percent": 20,
+    "domiciliary_sublimit_amount_inr": null,
+    "expense_summary": {
+      "total_claimed_inr": 25000,
+      "expense_breakdown_inr": {
+        "room": 0,
+        "doctor_fees": 0,
+        "medicines_diagnostics": 25000,
+        "pre_hospitalization": 0,
+        "post_hospitalization": 0,
+        "ambulance": 0
+      },
+      "domiciliary_sublimit_percent": 20,
+      "domiciliary_sublimit_amount_inr": 100000.0,
+      "provisional_payable_inr": null,
+      "deductions_inr": null,
+      "note": "This is an expense summary only. Final payable amount and deductions require verification of policy limits, admissibility, documents, and medical evidence."
+    }
+  },
+  {
+    "case_id": "CUSTOM-004",
+    "decision": "NEEDS_REVIEW",
+    "reasons": [
+      "Verify that the procedure is a listed eligible day-care procedure and is not ordinary outpatient treatment."
+    ],
+    "required_checks": [],
+    "elapsed_policy_days": 380,
+    "elapsed_policy_months": 12,
+    "coverage_months": 12,
+    "prior_coverage_months": 0,
+    "effective_coverage_months": 12,
+    "domiciliary_sublimit_percent": 20,
+    "domiciliary_sublimit_amount_inr": null,
+    "expense_summary": {
+      "total_claimed_inr": 20000,
+      "expense_breakdown_inr": {
+        "room": 0,
+        "doctor_fees": 12000,
+        "medicines_diagnostics": 8000,
+        "pre_hospitalization": 0,
+        "post_hospitalization": 0,
+        "ambulance": 0
+      },
+      "domiciliary_sublimit_percent": null,
+      "domiciliary_sublimit_amount_inr": null,
+      "provisional_payable_inr": null,
+      "deductions_inr": null,
+      "note": "This is an expense summary only. Final payable amount and deductions require verification of policy limits, admissibility, documents, and medical evidence."
+    }
+  },
+  {
+    "case_id": "CUSTOM-005",
+    "decision": "NEEDS_REVIEW",
+    "reasons": [
+      "Treatment type is not recognized and requires manual review."
+    ],
+    "required_checks": [
+      "Confirm hospital registration.",
+      "Confirm medical necessity."
+    ],
+    "elapsed_policy_days": 380,
+    "elapsed_policy_months": 12,
+    "coverage_months": 12,
+    "prior_coverage_months": 0,
+    "effective_coverage_months": 12,
+    "domiciliary_sublimit_percent": 20,
+    "domiciliary_sublimit_amount_inr": null,
+    "expense_summary": {
+      "total_claimed_inr": 5000,
+      "expense_breakdown_inr": {
+        "room": 0,
+        "doctor_fees": 0,
+        "medicines_diagnostics": 5000,
+        "pre_hospitalization": 0,
+        "post_hospitalization": 0,
+        "ambulance": 0
+      },
+      "domiciliary_sublimit_percent": null,
+      "domiciliary_sublimit_amount_inr": null,
+      "provisional_payable_inr": null,
+      "deductions_inr": null,
+      "note": "This is an expense summary only. Final payable amount and deductions require verification of policy limits, admissibility, documents, and medical evidence."
+    }
+  }
+]

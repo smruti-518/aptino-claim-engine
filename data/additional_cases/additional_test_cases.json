@@ -1,0 +1,107 @@
+[
+  {
+    "case_id": "CUSTOM-001",
+    "policy_start_date": "2024-01-01",
+    "claim_date": "2025-01-15",
+    "continuous_coverage_months": 12,
+    "prior_insurer_continuous_years": 0,
+    "sum_insured_inr": 500000,
+    "treatment": {
+      "type": "inpatient",
+      "admission_hours": 48,
+      "pre_existing": false,
+      "experimental": false
+    },
+    "evidence_context": {
+      "hospital_registered": true,
+      "medical_necessity_confirmed": true
+    },
+    "expenses_inr": {
+      "room": 20000,
+      "doctor_fees": 15000,
+      "medicines_diagnostics": 10000,
+      "pre_hospitalization": 2000,
+      "post_hospitalization": 3000,
+      "ambulance": 1000
+    }
+  },
+  {
+    "case_id": "CUSTOM-002",
+    "policy_start_date": "2024-01-01",
+    "claim_date": "2024-01-10",
+    "continuous_coverage_months": 0,
+    "prior_insurer_continuous_years": 0,
+    "sum_insured_inr": 500000,
+    "treatment": {
+      "type": "inpatient",
+      "admission_hours": 48,
+      "pre_existing": false,
+      "experimental": false
+    },
+    "evidence_context": {},
+    "expenses_inr": {}
+  },
+  {
+    "case_id": "CUSTOM-003",
+    "policy_start_date": "2020-01-01",
+    "claim_date": "2025-01-15",
+    "continuous_coverage_months": 60,
+    "prior_insurer_continuous_years": 0,
+    "sum_insured_inr": 500000,
+    "treatment": {
+      "type": "domiciliary",
+      "admission_hours": 0,
+      "pre_existing": false,
+      "experimental": false,
+      "hospital_room_unavailable": true,
+      "patient_cannot_be_moved": false
+    },
+    "evidence_context": {
+      "hospital_registered": true,
+      "medical_necessity_confirmed": true
+    },
+    "expenses_inr": {
+      "medicines_diagnostics": 25000
+    }
+  },
+  {
+    "case_id": "CUSTOM-004",
+    "policy_start_date": "2024-01-01",
+    "claim_date": "2025-01-15",
+    "continuous_coverage_months": 12,
+    "prior_insurer_continuous_years": 0,
+    "sum_insured_inr": 500000,
+    "treatment": {
+      "type": "day_care",
+      "admission_hours": 6,
+      "pre_existing": false,
+      "experimental": false
+    },
+    "evidence_context": {
+      "hospital_registered": true,
+      "medical_necessity_confirmed": false
+    },
+    "expenses_inr": {
+      "doctor_fees": 12000,
+      "medicines_diagnostics": 8000
+    }
+  },
+  {
+    "case_id": "CUSTOM-005",
+    "policy_start_date": "2024-01-01",
+    "claim_date": "2025-01-15",
+    "continuous_coverage_months": 12,
+    "prior_insurer_continuous_years": 0,
+    "sum_insured_inr": 500000,
+    "treatment": {
+      "type": "unknown",
+      "admission_hours": 0,
+      "pre_existing": false,
+      "experimental": false
+    },
+    "evidence_context": {},
+    "expenses_inr": {
+      "medicines_diagnostics": 5000
+    }
+  }
+]
