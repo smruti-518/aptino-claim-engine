@@ -12,15 +12,30 @@ class DenseRetriever:
         model_name="all-MiniLM-L6-v2",
     ):
         self.chunks_path = Path(chunks_path)
-        self.model = SentenceTransformer(model_name)
+        self.model_name = model_name
+        self.model = None
         self.chunks = self._load_chunks()
+        self.embeddings = None
 
-        texts = [chunk["text"] for chunk in self.chunks]
-        self.embeddings = self.model.encode(
-            texts,
-            normalize_embeddings=True,
-            show_progress_bar=False,
-        )
+    def _load_model(self):
+        if self.model is None:
+            self.model = SentenceTransformer(self.model_name)
+
+        return self.model
+
+    def _load_embeddings(self):
+        if self.embeddings is None:
+            model = self._load_model()
+
+            texts = [chunk["text"] for chunk in self.chunks]
+
+            self.embeddings = model.encode(
+                texts,
+                normalize_embeddings=True,
+                show_progress_bar=False,
+            )
+
+        return self.embeddings
 
     def _load_chunks(self):
         chunks = []
@@ -33,13 +48,16 @@ class DenseRetriever:
         return chunks
 
     def retrieve(self, query, top_k=5):
-        query_embedding = self.model.encode(
+        model = self._load_model()
+        embeddings = self._load_embeddings()
+
+        query_embedding = model.encode(
             [query],
             normalize_embeddings=True,
             show_progress_bar=False,
         )[0]
 
-        scores = np.dot(self.embeddings, query_embedding)
+        scores = np.dot(embeddings, query_embedding)
         ranked_indices = np.argsort(scores)[::-1][:top_k]
 
         results = []

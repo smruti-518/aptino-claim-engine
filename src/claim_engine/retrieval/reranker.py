@@ -6,18 +6,27 @@ class PolicyReranker:
         self,
         model_name="cross-encoder/ms-marco-MiniLM-L-6-v2",
     ):
-        self.model = CrossEncoder(model_name)
+        self.model_name = model_name
+        self.model = None
+
+    def _load_model(self):
+        if self.model is None:
+            self.model = CrossEncoder(self.model_name)
+
+        return self.model
 
     def rerank(self, query, results, top_k=5):
         if not results:
             return []
+
+        model = self._load_model()
 
         pairs = [
             (query, result["text"])
             for result in results
         ]
 
-        scores = self.model.predict(pairs)
+        scores = model.predict(pairs)
 
         reranked = []
 
