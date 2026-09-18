@@ -1,3 +1,11 @@
 PyMuPDF
 pydantic
 python-dotenv
+fastapi
+uvicorn
+streamlit
+rank-bm25
+numpy
+scikit-learn
+sentence-transformers
+requests
