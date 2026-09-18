@@ -7,5 +7,4 @@ streamlit
 rank-bm25
 numpy
 scikit-learn
-sentence-transformers
 requests
