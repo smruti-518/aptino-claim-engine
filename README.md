@@ -2,135 +2,504 @@
 
 An AI-assisted health-insurance claim assessment system that combines policy-document retrieval, specialized analysis agents, rule-based evaluation, and expense calculation to produce explainable claim-review results.
 
-The system is designed as a conservative decision-support tool. When the available information is insufficient to support a reliable automatic determination, it returns `NEEDS_REVIEW` or `INSUFFICIENT_EVIDENCE`.
-
-> This system is an assessment aid and does not replace a qualified claims examiner.
-
+The system is designed as a modular claim-assessment pipeline with separate components for policy ingestion, retrieval, agent-based analysis, deterministic rule evaluation, expense calculation, API serving, and a Streamlit user interface.
 
 ## Live Demo
 
-- **Frontend (Streamlit):** https://aptino-claim-engine-7qrsyaknhcixwfs5otwryq.streamlit.app/
-- **Backend API (Render):** https://aptino-claim-engine-38n8.onrender.com
+* **Frontend (Streamlit):** [https://aptino-claim-engine-7qrsyaknhcixwfs5otwryq.streamlit.app/]
+* **Backend API (Render):** [https://aptino-claim-engine-38n8.onrender.com]
 
+The Streamlit frontend sends claim requests to the deployed FastAPI backend.
 
-## 1. Project Overview
-
-The Aptino Claim Engine evaluates health-insurance claims using:
-
-- A health-insurance policy PDF
-- Structured claim information
-- Policy ingestion and meaningful chunking
-- Sparse BM25 retrieval
-- Dense semantic retrieval
-- Hybrid retrieval using Reciprocal Rank Fusion
-- Cross-encoder reranking
-- Specialized claim-analysis agents
-- Rule-based claim checks
-- Expense calculation
-- Evidence and policy citations
-- Structured execution traces
-- Streamlit frontend
-- FastAPI backend
-
-The architecture separates evidence retrieval, specialized analysis, deterministic rule checks, and final decision aggregation.
-
-The system intentionally favors manual review when the available evidence does not support a reliable automatic conclusion.
+> **Deployment note:** The deployed retrieval path uses lightweight BM25 retrieval so that the application can run within the memory constraints of the free Render deployment tier.
 
 ---
 
-## 2. Main Features
+## Project Overview
 
-### Policy and Retrieval
+The Aptino Claim Engine processes health-insurance claims against a provided insurance policy document.
 
-- PDF policy ingestion
-- Policy text extraction
-- Meaningful policy chunking
-- Page and section metadata
-- Chunk identifiers for citation
-- BM25 lexical retrieval
-- Dense semantic retrieval
-- Hybrid retrieval using Reciprocal Rank Fusion
-- Cross-encoder reranking
-- Retrieval metadata including ranks and scores
+The system performs the following high-level steps:
 
-### Multi-Agent Analysis
+1. Ingest the insurance policy PDF.
+2. Extract and chunk policy text.
+3. Index policy chunks for retrieval.
+4. Retrieve relevant policy evidence for a claim.
+5. Run multiple specialized claim-analysis agents.
+6. Combine agent outputs into a final assessment.
+7. Perform deterministic rule-based evaluation.
+8. Calculate applicable expenses and limits.
+9. Return an explainable result with policy citations and execution trace.
+10. Present the result through a Streamlit interface.
 
-Three specialized agents are implemented:
-
-- `CoverageAgent`
-- `HospitalizationAgent`
-- `DocumentationAgent`
-
-Each agent has a separate responsibility and returns structured `AgentDecision` output.
-
-### Decision and Evaluation
-
-- Structured Pydantic models
-- Conservative decision aggregation
-- Abstention / manual-review behavior
-- Initial waiting-period checks
-- Pre-existing condition waiting-period checks
-- Previous continuous coverage handling
-- Experimental-treatment checks
-- Inpatient treatment checks
-- Day-care treatment checks
-- Domiciliary treatment checks
-- Hospital-registration checks
-- Medical-necessity verification flags
-- Expense breakdown
-- Domiciliary sublimit calculation
-
-### Explainability
-
-The system exposes:
-
-- Agent-specific reasoning
-- Retrieved policy evidence
-- Policy chunk identifiers
-- Page and section metadata
-- Retrieval method
-- BM25 rank
-- Dense rank
-- Hybrid score
-- Reranking score
-- Key findings
-- Applicable limits
-- Missing evidence
-- Execution trace
-- Abstention / review explanation
+The system is designed to favor **traceability and human review** rather than making unsupported automatic claim approvals or rejections.
 
 ---
 
-## 3. Technology Stack
-
-- Python 3.12
-- FastAPI
-- Streamlit
-- PyMuPDF
-- Pydantic
-- Rank-BM25
-- Sentence Transformers
-- Scikit-learn
-- NumPy
-- Pytest
-
-Retrieval models:
+## Architecture
 
 ```text
-Dense embedding model:
-all-MiniLM-L6-v2
-
-Reranker:
-cross-encoder/ms-marco-MiniLM-L-6-v2
+                    ┌─────────────────────────┐
+                    │      Policy PDF         │
+                    │  Insurance Policy Docs  │
+                    └────────────┬────────────┘
+                                 │
+                                 ▼
+                    ┌─────────────────────────┐
+                    │   Policy Ingestion      │
+                    │  Text Extraction +      │
+                    │  Chunking + Metadata    │
+                    └────────────┬────────────┘
+                                 │
+                                 ▼
+                    ┌─────────────────────────┐
+                    │     BM25 Retriever      │
+                    │    Policy Evidence      │
+                    │       Retrieval         │
+                    └────────────┬────────────┘
+                                 │
+                ┌────────────────┼────────────────┐
+                │                │                │
+                ▼                ▼                ▼
+       ┌────────────────┐ ┌────────────────┐ ┌────────────────┐
+       │ Coverage Agent │ │Hospitalization │ │ Documentation  │
+       │                │ │     Agent      │ │     Agent      │
+       └────────┬───────┘ └────────┬───────┘ └────────┬───────┘
+                │                  │                  │
+                └──────────────────┼──────────────────┘
+                                   ▼
+                    ┌─────────────────────────┐
+                    │    Decision Engine      │
+                    │ Agent Aggregation +     │
+                    │ Confidence + Trace      │
+                    └────────────┬────────────┘
+                                 │
+                    ┌────────────┴────────────┐
+                    │                         │
+                    ▼                         ▼
+          ┌──────────────────┐      ┌──────────────────┐
+          │ Rule-Based       │      │ Expense          │
+          │ Evaluation       │      │ Calculator       │
+          └────────┬─────────┘      └────────┬─────────┘
+                   │                         │
+                   └────────────┬────────────┘
+                                ▼
+                    ┌─────────────────────────┐
+                    │       FastAPI API       │
+                    └────────────┬────────────┘
+                                 │
+                                 ▼
+                    ┌─────────────────────────┐
+                    │    Streamlit Frontend   │
+                    └─────────────────────────┘
 ```
-
-The project uses a lightweight custom Python orchestration approach rather than introducing an additional agent framework.
-
-This keeps the implementation small and makes the agent boundaries, state flow, and decision aggregation explicit.
 
 ---
 
-## 4. Project Structure
+## Key Components
+
+### 1. Policy Ingestion
+
+The policy PDF is processed into structured policy chunks containing:
+
+* Chunk ID
+* Page number
+* Section
+* Policy text
+
+The ingestion pipeline produces reusable artifacts consumed by the retrieval layer.
+
+Relevant files:
+
+```text
+scripts/ingest_policy.py
+src/claim_engine/ingestion/policy_ingestion.py
+```
+
+Generated artifacts:
+
+```text
+artifacts/policy_text.txt
+artifacts/policy_chunks.jsonl
+```
+
+---
+
+### 2. Policy Retrieval
+
+The deployed system uses **BM25 lexical retrieval** to identify policy sections relevant to each claim.
+
+BM25 is useful for this task because insurance policies contain domain-specific terminology such as:
+
+* hospitalization
+* waiting period
+* pre-existing disease
+* day-care procedures
+* domiciliary treatment
+* exclusions
+* medical necessity
+* claim documentation
+
+The retriever returns policy chunks together with retrieval metadata and policy citations.
+
+Relevant file:
+
+```text
+src/claim_engine/retrieval/bm25_retriever.py
+```
+
+The project also retains a lightweight hybrid-retrieval interface so that retrieval metadata remains compatible with the broader architecture.
+
+The active deployment does **not** load large transformer-based embedding or cross-encoder models. This keeps startup time and memory usage suitable for the free Render environment.
+
+---
+
+## Specialized Agents
+
+The system uses multiple specialized agents so that different aspects of a claim can be assessed independently.
+
+### CoverageAgent
+
+Focuses on:
+
+* Policy coverage
+* Treatment-related exclusions
+* Relevant policy evidence
+* Potential coverage concerns
+
+It retrieves relevant policy evidence and produces an explainable assessment.
+
+File:
+
+```text
+src/claim_engine/agents/coverage_agent.py
+```
+
+### HospitalizationAgent
+
+Focuses on:
+
+* Hospitalization requirements
+* Inpatient treatment
+* Hospitalization-related policy conditions
+* Whether sufficient information exists to assess hospitalization eligibility
+
+File:
+
+```text
+src/claim_engine/agents/hospitalization_agent.py
+```
+
+### DocumentationAgent
+
+Focuses on whether the claim contains sufficient basic information for assessment.
+
+It checks fields such as:
+
+* Claimed amount
+* Admission date
+* Discharge date
+* Hospital name
+
+It also identifies the need for supporting documentation such as:
+
+* Bills
+* Receipts
+* Medical records
+* Other claim documents
+
+File:
+
+```text
+src/claim_engine/agents/documentation_agent.py
+```
+
+---
+
+## Decision Engine
+
+The `ClaimDecisionEngine` orchestrates the specialized agents and combines their outputs.
+
+The engine records:
+
+* Individual agent decisions
+* Agent confidence
+* Key findings
+* Applicable limits
+* Missing evidence
+* Policy citations
+* Execution trace
+* Final decision
+* Abstention/review reason
+
+File:
+
+```text
+src/claim_engine/agents/decision_engine.py
+```
+
+The engine is intentionally conservative. When required information is missing or the available evidence does not support a reliable automatic determination, the system returns a review-oriented outcome rather than inventing a conclusion.
+
+---
+
+## Decision Statuses
+
+The current implementation uses the following decision values:
+
+```text
+APPROVE
+REJECT
+NEEDS_REVIEW
+INSUFFICIENT_EVIDENCE
+```
+
+In the current evaluation workflow, many cases are routed to `NEEDS_REVIEW` because the system is designed to surface policy evidence and verification requirements rather than automatically approve claims without sufficient supporting information.
+
+---
+
+## Rule-Based Evaluation
+
+In addition to the agent-based assessment, the project includes deterministic rule-based evaluation for known policy conditions.
+
+The rule evaluator checks claim information against documented policy rules, including conditions such as:
+
+* Initial waiting periods
+* Pre-existing condition waiting periods
+* Domiciliary treatment conditions
+* Day-care treatment requirements
+* Experimental treatment exclusions
+* Hospitalization-related requirements
+
+Relevant file:
+
+```text
+src/claim_engine/evaluation/public_case_rules.py
+```
+
+This provides a deterministic comparison layer alongside the retrieval-and-agent pipeline.
+
+---
+
+## Expense Calculation
+
+The project also includes an expense calculator for claim-related financial calculations.
+
+It can calculate or expose information such as:
+
+* Claimed amount
+* Applicable sublimits
+* Potential deductions
+* Provisional payable amount
+* Policy-based expense limits
+
+Relevant file:
+
+```text
+src/claim_engine/evaluation/expense_calculator.py
+```
+
+The expense calculation is kept separate from the policy-retrieval and agent-analysis layers so that financial calculations remain independently testable.
+
+---
+
+## Explainability
+
+Explainability is a core part of the system.
+
+### Policy Evidence
+
+Retrieved policy chunks include:
+
+* Chunk ID
+* Page
+* Section
+* Text
+* Retrieval score
+
+### Policy Citations
+
+The final result includes references to the policy chunks used during analysis.
+
+Example:
+
+```text
+page_11_chunk_36
+page_2_chunk_6
+```
+
+### Agent Decisions
+
+Each specialized agent reports:
+
+* Agent name
+* Decision
+* Reasoning
+* Confidence
+* Evidence
+
+### Execution Trace
+
+The decision engine records the major stages of execution, for example:
+
+```text
+Received and validated claim input.
+Started CoverageAgent analysis.
+CoverageAgent completed policy retrieval and coverage analysis.
+Started HospitalizationAgent analysis.
+HospitalizationAgent completed hospitalization analysis.
+Started DocumentationAgent analysis.
+DocumentationAgent completed documentation analysis.
+Aggregated specialized-agent decisions.
+Validation status: input validated successfully.
+Elapsed analysis time: ...
+Final decision generated: ...
+```
+
+This makes the system easier to inspect and debug.
+
+---
+
+## API
+
+The backend is implemented using FastAPI.
+
+Main endpoint:
+
+```text
+POST /analyze
+```
+
+The API accepts structured claim information and returns a structured final assessment.
+
+Example claim input:
+
+```json
+{
+  "claim_id": "CUSTOM-001",
+  "patient_age": 45,
+  "diagnosis": "Acute appendicitis",
+  "treatment": "Laparoscopic appendectomy",
+  "hospital_name": "Example Hospital",
+  "admission_date": "2018-05-10",
+  "discharge_date": "2018-05-12",
+  "claimed_amount": 45000,
+  "policy_start_date": "2017-01-01",
+  "notes": "Inpatient hospitalization for surgery"
+}
+```
+
+The API returns structured information including:
+
+```text
+claim_id
+decision
+reasoning
+confidence
+key_findings
+applicable_limits
+missing_evidence
+agent_decisions
+citations
+policy_citations
+execution_trace
+abstention_reason
+```
+
+---
+
+## Streamlit Frontend
+
+The Streamlit application provides an interactive interface for submitting claims and viewing the assessment.
+
+The frontend displays:
+
+* Claim assessment
+* Decision
+* Confidence
+* Reasoning
+* Key findings
+* Applicable limits
+* Missing evidence
+* Policy citations
+* Individual agent results
+* Execution trace
+* Rule-based evaluation
+* Expense calculation
+* Full API response
+
+File:
+
+```text
+app.py
+```
+
+The frontend communicates with the backend through the `API_URL` environment variable.
+
+Example:
+
+```text
+API_URL=https://aptino-claim-engine-38n8.onrender.com/analyze
+```
+
+---
+
+## Deployment
+
+### Backend
+
+The FastAPI backend is deployed on Render.
+
+Deployment characteristics:
+
+```text
+Platform: Render
+Service type: Web Service
+Plan: Free
+CPU: 0.1
+Memory: 512 MB
+```
+
+The deployment uses Uvicorn:
+
+```bash
+uvicorn src.claim_engine.api.main:app --host 0.0.0.0 --port $PORT
+```
+
+Live backend:
+
+[https://aptino-claim-engine-38n8.onrender.com](https://aptino-claim-engine-38n8.onrender.com)
+
+### Frontend
+
+The Streamlit frontend is deployed using Streamlit Community Cloud.
+
+Live frontend:
+
+[https://aptino-claim-engine-7qrsyaknhcixwfs5otwryq.streamlit.app/](https://aptino-claim-engine-7qrsyaknhcixwfs5otwryq.streamlit.app/)
+
+The frontend is configured to call the Render backend using the `API_URL` secret.
+
+---
+
+## Low-Memory Deployment Design
+
+The deployed version was optimized for the resource constraints of the free Render tier.
+
+Large transformer-based retrieval and reranking models can require significant memory and startup time. Therefore, the production deployment uses BM25 retrieval rather than loading large embedding and cross-encoder models.
+
+This provides:
+
+* Lower memory usage
+* Faster startup
+* Smaller deployment footprint
+* Fewer heavyweight dependencies
+* Better compatibility with low-resource hosting
+
+The retrieval interface remains modular so that a more advanced semantic retrieval layer can be introduced later without redesigning the entire claim-processing architecture.
+
+---
+
+## Project Structure
 
 ```text
 aptino-claim-engine/
@@ -138,6 +507,12 @@ aptino-claim-engine/
 ├── app.py
 ├── README.md
 ├── requirements.txt
+├── pytest.ini
+│
+├── artifacts/
+│   ├── policy_text.txt
+│   ├── policy_chunks.jsonl
+│   └── evaluation_results.json
 │
 ├── data/
 │   ├── policy/
@@ -149,25 +524,22 @@ aptino-claim-engine/
 │   └── additional_cases/
 │       └── additional_test_cases.json
 │
-├── artifacts/
-│   ├── policy_text.txt
-│   ├── policy_chunks.jsonl
-│   └── evaluation_results.json
-│
 ├── scripts/
-│   ├── evaluate.py
 │   ├── ingest_policy.py
-│   └── inspect_cases.py
+│   └── evaluate.py
 │
 ├── src/
 │   └── claim_engine/
 │       │
 │       ├── agents/
-│       │   ├── models.py
 │       │   ├── coverage_agent.py
 │       │   ├── hospitalization_agent.py
 │       │   ├── documentation_agent.py
-│       │   └── decision_engine.py
+│       │   ├── decision_engine.py
+│       │   └── models.py
+│       │
+│       ├── api/
+│       │   └── main.py
 │       │
 │       ├── evaluation/
 │       │   ├── public_case_rules.py
@@ -178,997 +550,413 @@ aptino-claim-engine/
 │       │
 │       └── retrieval/
 │           ├── bm25_retriever.py
-│           ├── dense_retriever.py
 │           ├── hybrid_retriever.py
+│           ├── dense_retriever.py
 │           └── reranker.py
 │
 └── tests/
-    └── test_public_case_rules.py
+    ├── test_ingestion.py
+    ├── test_retrieval.py
+    ├── test_agents.py
+    ├── test_decision_engine.py
+    ├── test_api.py
+    ├── test_expense_calculator.py
+    ├── test_evaluation.py
+    └── test_additional_cases.py
 ```
 
 ---
 
-## 5. Setup
+## Installation
 
-### Create the virtual environment
+### 1. Clone the repository
 
-On Windows PowerShell:
+```bash
+git clone https://github.com/smruti-518/aptino-claim-engine.git
+cd aptino-claim-engine
+```
 
-```powershell
+### 2. Create a virtual environment
+
+Windows:
+
+```bash
 python -m venv .venv
+.venv\Scripts\activate
 ```
 
-Activate it:
+Linux/macOS:
 
-```powershell
-.venv\Scripts\Activate.ps1
+```bash
+python -m venv .venv
+source .venv/bin/activate
 ```
 
-### Install dependencies
+### 3. Install dependencies
 
-```powershell
+```bash
 pip install -r requirements.txt
 ```
 
 ---
 
-## 6. Policy Ingestion
+## Policy Ingestion
 
-The policy PDF is converted into searchable text and structured policy chunks.
+To process the supplied policy document:
 
-Run:
-
-```powershell
-python scripts\ingest_policy.py
+```bash
+python scripts/ingest_policy.py
 ```
 
-Generated artifacts:
+This generates:
 
 ```text
 artifacts/policy_text.txt
 artifacts/policy_chunks.jsonl
 ```
 
-Each policy chunk contains metadata such as:
-
-- Chunk identifier
-- Page number
-- Section
-- Policy text
-
-Chunk identifiers are used to connect retrieved evidence to policy citations shown to the reviewer.
+These artifacts are then used by the retrieval layer.
 
 ---
 
-## 7. Running the Application
+## Running the Backend Locally
 
-The system has two application components:
+Start the FastAPI server:
 
-- FastAPI backend
-- Streamlit frontend
-
-### Start FastAPI
-
-From the project root:
-
-```powershell
-uvicorn src.claim_engine.api.main:app --host 127.0.0.1 --port 8000 --reload
+```bash
+uvicorn src.claim_engine.api.main:app --reload
 ```
 
-Health endpoint:
+The API will normally be available at:
 
 ```text
-GET /health
+http://127.0.0.1:8000
 ```
 
-Example:
-
-```powershell
-curl.exe http://127.0.0.1:8000/health
-```
-
-Expected response:
-
-```json
-{
-  "status": "healthy",
-  "service": "aptino-claim-engine"
-}
-```
-
-API documentation is available at:
+The analysis endpoint is:
 
 ```text
-http://127.0.0.1:8000/docs
+http://127.0.0.1:8000/analyze
 ```
 
-### Start Streamlit
+---
+
+## Running the Frontend Locally
 
 In a second terminal:
 
-```powershell
-streamlit run app.py --server.fileWatcherType none
+```bash
+streamlit run app.py
 ```
 
-Open:
+The Streamlit interface will open in the browser.
+
+By default, the frontend expects:
 
 ```text
-http://localhost:8501
+http://127.0.0.1:8000/analyze
 ```
 
-The frontend displays:
+To use a different backend:
 
-- Final assessment decision
-- Confidence
-- Reasoning
-- Key findings
-- Applicable limits
-- Missing evidence
-- Policy citations
-- Individual agent decisions
-- Execution trace
-- Rule-based evaluation
-- Expense breakdown
-- Full assessment results
-
----
-
-## 8. API
-
-### `GET /health`
-
-Used as a lightweight service health check.
-
-Example response:
-
-```json
-{
-  "status": "healthy",
-  "service": "aptino-claim-engine"
-}
-```
-
-### `POST /analyze`
-
-Accepts a structured claim and returns a machine-readable assessment.
-
-Example request:
-
-```json
-{
-  "claim_id": "TEST-001",
-  "patient_age": 45,
-  "diagnosis": "appendicitis",
-  "treatment": "inpatient hospitalization",
-  "hospital_name": "Test Hospital",
-  "admission_date": "2025-06-10",
-  "discharge_date": "2025-06-12",
-  "claimed_amount": 50000,
-  "policy_start_date": "2024-01-01",
-  "notes": "Routine inpatient treatment"
-}
-```
-
-Example response structure:
-
-```json
-{
-  "claim_id": "TEST-001",
-  "decision": "NEEDS_REVIEW",
-  "confidence": 0.583,
-  "reasoning": "...",
-  "key_findings": [],
-  "applicable_limits": [],
-  "missing_evidence": [],
-  "agent_decisions": [],
-  "citations": [],
-  "policy_citations": [],
-  "execution_trace": [],
-  "abstention_reason": "..."
-}
-```
-
-The exact response contains the evidence and structured outputs produced by the specialized agents.
-
----
-
-## 9. Architecture
-
-The system follows this high-level flow:
-
-```text
-                     ┌──────────────────────┐
-                     │      Claim Input     │
-                     └──────────┬───────────┘
-                                │
-                                ▼
-                     ┌──────────────────────┐
-                     │   Pydantic Validation│
-                     └──────────┬───────────┘
-                                │
-                                ▼
-                ┌───────────────────────────────┐
-                │      Specialized Agents       │
-                └───────────────┬───────────────┘
-                                │
-              ┌─────────────────┼─────────────────┐
-              │                 │                 │
-              ▼                 ▼                 ▼
-       CoverageAgent     HospitalizationAgent  DocumentationAgent
-              │                 │                 │
-              └─────────────────┼─────────────────┘
-                                │
-                                ▼
-                     ┌──────────────────────┐
-                     │ Structured Agent     │
-                     │ Decisions + Evidence │
-                     └──────────┬───────────┘
-                                │
-                                ▼
-                     ┌──────────────────────┐
-                     │   Decision Engine    │
-                     │ Conservative         │
-                     │ Aggregation          │
-                     └──────────┬───────────┘
-                                │
-                    ┌───────────┴───────────┐
-                    │                       │
-                    ▼                       ▼
-             Final Decision          Review / Abstention
-                    │
-                    ▼
-             Streamlit / API
-```
-
-### Agent Boundaries
-
-#### CoverageAgent
-
-Responsible for policy retrieval related to:
-
-- Diagnosis
-- Treatment
-- Coverage eligibility
-- Exclusions
-- Waiting periods
-
-It retrieves and reranks policy evidence and identifies areas requiring verification.
-
-#### HospitalizationAgent
-
-Responsible for:
-
-- Hospitalization-related policy evidence
-- Inpatient treatment
-- Admission duration
-- The 24-hour hospitalization threshold
-- Admission/discharge documentation
-
-It does not independently approve a claim.
-
-#### DocumentationAgent
-
-Responsible for checking whether important claim information is present, including:
-
-- Claimed amount
-- Admission date
-- Discharge date
-- Hospital name
-- Supporting documents
-- Bills and receipts
-- Medical records
-- Treatment notes
-
-If required claim information is absent, it can return `INSUFFICIENT_EVIDENCE`.
-
----
-
-## 10. Structured State
-
-The system uses Pydantic models to exchange structured state between components.
-
-Core models include:
-
-```text
-ClaimInput
-Evidence
-AgentDecision
-FinalDecision
-```
-
-`AgentDecision` contains:
-
-- Agent name
-- Decision
-- Reasoning
-- Evidence
-- Confidence
-- Key findings
-- Applicable limits
-- Missing evidence
-- Policy citations
-
-`FinalDecision` aggregates these results and additionally contains:
-
-- Claim ID
-- Final decision
-- Confidence
-- Aggregated findings
-- Aggregated limits
-- Missing evidence
-- Agent decisions
-- Citations
-- Policy citations
-- Execution trace
-- Abstention reason
-
-This prevents the final decision from depending on unstructured text alone.
-
----
-
-## 11. Retrieval Pipeline
-
-The retrieval system uses multiple stages.
-
-### 11.1 BM25 Sparse Retrieval
-
-BM25 performs lexical matching between the claim query and policy chunks.
-
-This is useful when important claim or policy terminology appears directly in the policy.
-
-### 11.2 Dense Retrieval
-
-Dense retrieval uses:
-
-```text
-all-MiniLM-L6-v2
-```
-
-It retrieves semantically related policy passages even when the wording differs from the claim.
-
-### 11.3 Hybrid Retrieval
-
-BM25 and dense retrieval are combined using Reciprocal Rank Fusion (RRF).
-
-The implementation uses:
-
-```text
-RRF contribution = 1 / (60 + rank)
-```
-
-For a chunk appearing in both result sets:
-
-```text
-hybrid score =
-    1 / (60 + BM25 rank)
-    +
-    1 / (60 + dense rank)
-```
-
-This combines lexical and semantic retrieval signals without requiring either retrieval method to be sufficient on its own.
-
-### 11.4 Reranking
-
-The fused candidate set is reranked using:
-
-```text
-cross-encoder/ms-marco-MiniLM-L-6-v2
-```
-
-The reranker evaluates the relevance of retrieved policy passages to the claim query.
-
-Evidence records retain metadata such as:
-
-- `chunk_id`
-- `page`
-- `section`
-- `retrieval_method`
-- `bm25_rank`
-- `dense_rank`
-- `hybrid_score`
-- `rerank_score`
-
----
-
-## 12. Retrieval Design Trade-offs
-
-### BM25
-
-Advantages:
-
-- Fast
-- Interpretable
-- Good for exact policy terminology
-- No embedding computation required
-
-Limitation:
-
-- Can miss semantically related passages when wording differs.
-
-### Dense Retrieval
-
-Advantages:
-
-- Captures semantic similarity
-- More robust to wording differences
-
-Limitations:
-
-- Depends on embedding-model quality
-- Less directly interpretable than lexical matching
-- Adds model inference cost
-
-### Hybrid Retrieval
-
-Combining both approaches improves robustness across exact terminology and semantic variations.
-
-The trade-off is additional complexity and computation compared with a single retriever.
-
-### Reranking
-
-Cross-encoder reranking provides another relevance stage after candidate retrieval.
-
-The trade-off is higher inference cost, so reranking is applied only to a bounded candidate set rather than the entire policy.
-
----
-
-## 13. Decision Logic
-
-The current decision model supports:
-
-```text
-APPROVE
-REJECT
-NEEDS_REVIEW
-INSUFFICIENT_EVIDENCE
-```
-
-The decision engine uses conservative aggregation:
-
-1. If any specialized agent returns `INSUFFICIENT_EVIDENCE`, the final decision becomes `INSUFFICIENT_EVIDENCE`.
-
-2. Otherwise, if any specialized agent returns `NEEDS_REVIEW`, the final decision becomes `NEEDS_REVIEW`.
-
-3. The current engine does not automatically approve a claim solely because retrieved evidence appears relevant.
-
-4. The final result includes a review or abstention explanation when automatic determination is not supported.
-
-This prioritizes evidence sufficiency and human review over unsupported automation.
-
----
-
-## 14. Rule-Based Evaluation
-
-A separate deterministic evaluator is used for supplied public and additional test cases.
-
-The evaluator checks:
-
-- Initial waiting period
-- Pre-existing disease waiting period
-- Previous continuous coverage
-- Experimental treatment
-- Inpatient hospitalization
-- Day-care treatment
-- Domiciliary treatment
-- Hospital registration
-- Medical necessity
-
-Configured rule values include:
-
-```text
-Initial waiting period: 30 days
-Pre-existing disease waiting period: 48 months
-Domiciliary sublimit: 20%
-```
-
-### Treatment Types
-
-The evaluator supports:
-
-```text
-inpatient
-day_care
-domiciliary
-```
-
-### Inpatient
-
-The evaluator checks whether the admission reaches the configured 24-hour threshold.
-
-Cases below the threshold are sent for review because some procedures may qualify under day-care exceptions.
-
-### Day-care
-
-The evaluator flags the need to verify that the procedure is a listed eligible day-care procedure rather than ordinary outpatient treatment.
-
-### Domiciliary
-
-The evaluator checks conditions including:
-
-- Hospital room unavailability
-- Whether the patient can be moved to a hospital
-- Medical necessity
-- Applicable policy limits
-- Supporting evidence
-
----
-
-## 15. Expense Calculation
-
-The expense calculator summarizes:
-
-- Room
-- Doctor fees
-- Medicines and diagnostics
-- Pre-hospitalization
-- Post-hospitalization
-- Ambulance
-
-The total claimed amount is calculated as the sum of these expense categories.
-
-For domiciliary treatment, the configured sublimit is:
-
-```text
-Domiciliary sublimit =
-    Sum insured × 20 / 100
-```
-
-Example:
-
-```text
-Sum insured: ₹5,00,000
-Domiciliary sublimit: 20%
-
-₹5,00,000 × 20%
-= ₹1,00,000
-```
-
-The sublimit is **not** treated as the final payable amount.
-
-The current implementation leaves:
-
-```text
-provisional_payable_inr: null
-deductions_inr: null
-```
-
-until policy admissibility, supporting documents, medical evidence, and applicable limits can be verified.
-
----
-
-## 16. Explainability and Citations
-
-Each assessment exposes policy evidence through structured `Evidence` objects.
-
-An evidence record includes:
-
-```text
-chunk_id
-page
-section
-text
-score
-```
-
-The final decision also exposes policy chunk identifiers through:
-
-```text
-citations
-policy_citations
-```
-
-This allows a reviewer to locate the policy passages used by the agents.
-
-The system also preserves retrieval metadata, including:
-
-- BM25 rank
-- Dense rank
-- Hybrid score
-- Reranking score
-
-This makes retrieval behavior inspectable rather than presenting an unsupported conclusion without evidence.
-
----
-
-## 17. Execution Trace
-
-The frontend exposes a high-level execution trace rather than hidden model reasoning.
-
-A verified example includes:
-
-```text
-1. Received and validated claim input.
-2. Started CoverageAgent analysis.
-3. CoverageAgent completed policy retrieval and coverage analysis.
-   Retrieved 3 policy chunks.
-4. Started HospitalizationAgent analysis.
-5. HospitalizationAgent completed hospitalization analysis.
-   Retrieved 5 policy chunks.
-6. Started DocumentationAgent analysis.
-7. DocumentationAgent completed documentation analysis.
-   Retrieved 5 policy chunks.
-8. Aggregated specialized-agent decisions.
-9. Validation status: input validated successfully.
-10. Elapsed analysis time: 0.571 seconds.
-11. Final decision generated: NEEDS_REVIEW.
-```
-
-The trace provides:
-
-- Validation status
-- Agent names
-- Major actions
-- Retrieval result counts
-- Aggregation step
-- Elapsed analysis time
-- Final decision
-
-It intentionally does not expose hidden chain-of-thought.
-
----
-
-## 18. Abstention and Manual Review
-
-The system is designed to avoid unsupported automatic decisions.
-
-`NEEDS_REVIEW` is used when:
-
-- Policy evidence requires verification
-- Medical necessity cannot be established
-- Documentation still needs verification
-- Treatment eligibility requires additional evidence
-- Expense admissibility requires verification
-- The decision engine cannot confidently establish automatic approval/rejection
-
-`INSUFFICIENT_EVIDENCE` is used when required claim information or policy evidence is not sufficient for assessment.
-
-The final response includes an `abstention_reason` when the system cannot support a reliable automatic determination.
-
----
-
-## 19. Evaluation
-
-The reproducible evaluation script is:
+Windows PowerShell:
 
 ```powershell
-python scripts\evaluate.py
+$env:API_URL="https://your-backend-url/analyze"
+streamlit run app.py
 ```
 
-The current verified run processed:
+Linux/macOS:
+
+```bash
+export API_URL="https://your-backend-url/analyze"
+streamlit run app.py
+```
+
+---
+
+## Running Tests
+
+Run the automated test suite:
+
+```bash
+pytest -q
+```
+
+Current test suite result:
 
 ```text
-Loaded 12 public cases.
-Loaded 5 additional cases.
-Total cases: 17
+8 passed
 ```
 
-Results:
+The tests cover areas including:
+
+* Policy ingestion
+* Retrieval
+* Agent behavior
+* Decision engine
+* API behavior
+* Expense calculation
+* Rule-based evaluation
+* Additional claim cases
+
+---
+
+## Evaluation
+
+The evaluation script processes the supplied public test cases and additional custom cases.
+
+Run:
+
+```bash
+python scripts/evaluate.py
+```
+
+The current evaluation set contains:
 
 ```text
-Public cases:      12
-Additional cases:   5
-Total cases:       17
-
-NEEDS_REVIEW:      11
-REJECT:             6
+12 public cases
+5 additional custom cases
+-------------------------
+17 total cases
 ```
 
-The current evaluator does not automatically establish ground-truth accuracy metrics for every case, so these results should be interpreted as **case-processing and decision-output results**, not as an accuracy percentage.
+Current observed outcomes:
 
-Results are written to:
+```text
+NEEDS_REVIEW            11
+REJECT                   6
+APPROVE                  0
+```
+
+The evaluation results are saved to:
 
 ```text
 artifacts/evaluation_results.json
 ```
 
-### Evaluated scenarios
+The evaluation script reports system outcomes for the supplied cases. It does not constitute an accuracy percentage because the evaluator does not compare every generated decision against an expected ground-truth label.
 
-The test set includes cases covering:
+---
 
-- Inpatient treatment
-- Initial waiting-period rejection
-- Pre-existing-condition waiting period
-- Domiciliary treatment
-- Day-care treatment
-- Experimental treatment
-- Unknown treatment type
-- Additional custom scenarios
+## Example Evaluation Cases
 
-The additional test set contains five custom cases:
+The evaluation set includes scenarios involving:
+
+* Inpatient hospitalization
+* Initial waiting periods
+* Pre-existing conditions
+* Domiciliary treatment
+* Day-care procedures
+* Experimental treatment
+* Missing or incomplete claim information
+* Unknown treatment types
+
+Examples of deterministic policy outcomes observed in the evaluation include:
 
 ```text
-CUSTOM-001
-CUSTOM-002
-CUSTOM-003
-CUSTOM-004
-CUSTOM-005
+PUB-002  -> REJECT
+Reason: Initial 30-day waiting period
+
+PUB-003  -> REJECT
+Reason: Pre-existing condition waiting-period requirement
+
+PUB-012  -> REJECT
+Reason: Experimental treatment
+
+CUSTOM-002 -> REJECT
+Reason: Waiting-period condition
 ```
+
+Other cases are routed to `NEEDS_REVIEW` where additional policy verification or supporting documentation is required.
 
 ---
 
-## 20. Automated Tests
+## Configuration
 
-Run:
+The Streamlit frontend supports configuration through the `API_URL` environment variable.
 
-```powershell
-pytest -q
-```
-
-Verified test result:
+Example:
 
 ```text
-8 passed in 0.06s
+API_URL=http://127.0.0.1:8000/analyze
 ```
 
-The tests cover deterministic evaluation and expense-calculation behavior, including:
+For the deployed frontend, the value points to the Render backend.
 
-- Initial waiting-period rejection
-- Inpatient claim review
-- Experimental-treatment rejection
-- Domiciliary-treatment review
-- Day-care review
-- Expense total calculation
-- Domiciliary sublimit calculation
-- Non-domiciliary expense behavior
+Secrets and environment files are excluded from Git using `.gitignore`.
 
 ---
 
-## 21. Reliability Scenarios
+## Technology Stack
 
-The implementation is designed around several reliability scenarios relevant to policy-based claim assessment.
+### Backend
 
-### Waiting-period outcome
+* Python
+* FastAPI
+* Uvicorn
+* Pydantic
 
-The deterministic evaluator checks the configured initial waiting period and can reject a claim falling inside that period.
+### Policy Processing
 
-### Pre-existing condition
+* PyMuPDF
 
-The evaluator considers the configured 48-month waiting period and prior continuous coverage.
+### Retrieval
 
-### Hospitalization threshold
+* BM25
+* rank-bm25
+* Lightweight retrieval interface
 
-The system checks the 24-hour inpatient threshold while allowing review for possible day-care exceptions.
+### Evaluation
 
-### Category/sub-limit handling
+* Deterministic rule-based evaluation
+* Expense calculation
 
-Domiciliary treatment is evaluated separately and the configured 20% sublimit can be calculated from the supplied sum insured.
+### Frontend
 
-### Insufficient evidence
+* Streamlit
 
-Missing claim fields or incomplete policy evidence can lead to `INSUFFICIENT_EVIDENCE` or `NEEDS_REVIEW`.
+### Testing
 
-### Irrelevant or unsupported attributes
+* pytest
 
-The system does not attempt to make a final claim determination from arbitrary attributes that are not supported by the configured rules and retrieved evidence.
+### Deployment
 
----
-
-## 22. Observed Failure Cases and Improvements
-
-### Failure Case 1: Incomplete claim documentation
-
-A claim may contain enough information to retrieve relevant policy evidence but still lack supporting documentation such as medical records, bills, or admission/discharge records.
-
-**Observed behavior:**
-
-The system keeps the claim in manual review rather than treating retrieved policy text as sufficient evidence.
-
-**Root cause:**
-
-Policy retrieval cannot substitute for missing claim documents.
-
-**Improvement:**
-
-Add document upload, OCR, document classification, and structured extraction from bills and medical records.
+* Render
+* Streamlit Community Cloud
 
 ---
 
-### Failure Case 2: Policy evidence does not establish final admissibility
+## Design Principles
 
-A retrieved policy passage may establish a general hospitalization requirement without establishing all conditions required for final payment.
+### 1. Modular Architecture
 
-**Observed behavior:**
+Policy ingestion, retrieval, agents, decision aggregation, evaluation, API serving, and frontend presentation are separated into independent components.
 
-The system returns `NEEDS_REVIEW` and reports missing verification requirements.
+This makes individual components easier to test and replace.
 
-**Root cause:**
+### 2. Evidence-Based Decisions
 
-The current retrieval and agent layer is evidence-oriented but does not perform complete medical/admissibility verification.
+Agent outputs are associated with retrieved policy evidence rather than relying only on free-form reasoning.
 
-**Improvement:**
+### 3. Explainability
 
-Add more granular policy rules and condition-specific evidence checks, with stronger section-aware retrieval.
+The system exposes reasoning, confidence, policy citations, evidence, and execution traces.
 
----
+### 4. Conservative Automation
 
-### Failure Case 3: Rule evaluation and AI assessment can surface different review signals
+When evidence is incomplete, the system favors `NEEDS_REVIEW` or `INSUFFICIENT_EVIDENCE` rather than producing unsupported automatic decisions.
 
-The system contains both:
+### 5. Deterministic Financial Logic
 
-1. AI-agent assessment
-2. Deterministic public-case evaluation
+Expense calculations and explicit policy rules are implemented separately from the retrieval and agent layers.
 
-These are separate evaluation paths and can produce different statuses for the same test case.
+### 6. Deployment Awareness
 
-For example, a deterministic rule may identify a rejection condition while the broader agent workflow may retain `NEEDS_REVIEW` because it requires policy/document verification.
-
-**Root cause:**
-
-The two pipelines currently serve different purposes: deterministic test-case rules provide explicit case checks, while the agent engine is intentionally conservative and evidence-oriented.
-
-**Improvement:**
-
-Introduce a unified decision-policy layer that explicitly reconciles deterministic rule outcomes with evidence sufficiency before producing the final claim status.
+The deployed architecture is optimized for low-memory infrastructure while keeping the system modular enough to support more advanced retrieval approaches in the future.
 
 ---
 
-## 23. Known Limitations
+## Failure Handling and Abstention
 
-The current implementation has several deliberate limitations:
+The system is designed to avoid silently treating missing information as evidence.
 
-- It does not replace a qualified claims examiner.
-- It does not independently verify medical records.
-- It does not establish medical necessity.
-- It does not automatically determine final admissibility in all cases.
-- It does not currently calculate a final payable amount after all deductions.
-- `provisional_payable_inr` and `deductions_inr` remain unavailable until further verification.
-- Policy citations should be verified against the source policy.
-- Retrieval quality depends on policy extraction and chunking.
-- Dense retrieval and reranking require machine-learning model inference.
-- The decision engine is intentionally conservative.
-- Domiciliary eligibility requires separate policy and medical verification.
-- The current evaluation script reports case outcomes but does not provide a complete ground-truth accuracy benchmark.
-- Retrieval-quality metrics such as recall@k and citation-hit rate are not currently calculated automatically.
+Examples of conditions that can lead to review or insufficient-evidence outcomes include:
+
+* Missing admission or discharge information
+* Missing hospital information
+* Missing claimed amount
+* Insufficient hospitalization evidence
+* Unclear treatment eligibility
+* Policy exclusions requiring verification
+* Supporting documentation not supplied
+
+When an automatic determination cannot be reliably supported, the system exposes an abstention/review reason.
 
 ---
 
-## 24. Design Trade-offs
+## Rule-Based vs Agent-Based Assessment
 
-### Conservative decisions over aggressive automation
+The project intentionally maintains two complementary assessment paths.
 
-The engine defaults to review when evidence is incomplete.
-
-This reduces the risk of unsupported automatic claim decisions but increases the number of cases requiring manual review.
-
-### Lightweight custom orchestration
-
-The project uses explicit Python orchestration rather than adding a large agent framework.
-
-Benefits:
-
-- Simple control flow
-- Easy debugging
-- Explicit state transitions
-- Fewer dependencies
-- Clear agent boundaries
-
-Trade-off:
-
-- Less built-in orchestration functionality than a dedicated workflow framework.
-
-### Multiple retrieval methods
-
-Using BM25, dense retrieval, RRF, and reranking adds computational cost.
-
-The benefit is greater retrieval robustness across exact terminology and semantic variations.
-
-### Structured outputs
-
-Pydantic models add schema discipline and make the API response machine-readable.
-
-The trade-off is that every agent must conform to a predefined output structure.
-
----
-
-## 25. Future Improvements
-
-Possible future improvements include:
-
-- Document upload and OCR
-- Extraction from bills and medical records
-- More precise section-aware policy retrieval
-- Additional policy-specific deterministic rules
-- Stronger date and amount validation
-- Confidence calibration
-- Ground-truth accuracy evaluation
-- Precision, recall, and F1 metrics
-- Abstention-rate evaluation
-- Retrieval recall@k
-- Citation-hit-rate evaluation
-- Structured audit logging
-- Persistent storage
-- Automated API integration tests
-- Containerized deployment
-- Retrieval-quality monitoring
-- Human-review feedback loops
-- More detailed domiciliary-policy validation
-- Unified reconciliation between deterministic rules and agent decisions
-
----
-
-## 26. Reproducibility
-
-From a fresh project environment:
-
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-```
-
-Ingest the policy:
-
-```powershell
-python scripts\ingest_policy.py
-```
-
-Run tests:
-
-```powershell
-pytest -q
-```
-
-Run the complete supplied-case evaluation:
-
-```powershell
-python scripts\evaluate.py
-```
-
-Start the backend:
-
-```powershell
-uvicorn src.claim_engine.api.main:app --host 127.0.0.1 --port 8000 --reload
-```
-
-Start the frontend in a second terminal:
-
-```powershell
-streamlit run app.py --server.fileWatcherType none
-```
-
-Then open:
+### Agent-Based Assessment
 
 ```text
-http://localhost:8501
+Policy retrieval
+       ↓
+CoverageAgent
+HospitalizationAgent
+DocumentationAgent
+       ↓
+Decision Engine
 ```
 
-API documentation:
+This provides contextual evidence and explainable reasoning.
 
-```text
-http://127.0.0.1:8000/docs
-```
+### Rule-Based Assessment
 
-Health check:
+The rule evaluator uses explicit deterministic rules for known policy conditions.
 
-```text
-http://127.0.0.1:8000/health
-```
+This provides a predictable evaluation layer for cases such as waiting periods and explicit exclusions.
+
+The two outputs can be inspected separately through the Streamlit interface.
 
 ---
 
-## 27. Conclusion
+## Future Improvements
 
-The Aptino Claim Engine demonstrates a modular approach to AI-assisted health-insurance claim assessment.
+Potential future improvements include:
 
-It combines:
+* More comprehensive policy-rule extraction
+* Better structured policy representations
+* Semantic embedding retrieval
+* Cross-encoder reranking
+* More specialized claim agents
+* Stronger evidence-to-decision validation
+* More detailed expense-limit calculations
+* Improved document verification
+* Human-in-the-loop review workflows
+* Additional evaluation datasets
+* Automated monitoring and observability
+* Production-grade persistence and audit logging
 
-- Policy ingestion
-- Meaningful policy chunking
-- Sparse retrieval
-- Dense retrieval
-- Hybrid retrieval
-- Cross-encoder reranking
-- Specialized analysis agents
-- Structured state
-- Deterministic rule evaluation
-- Expense calculation
-- Evidence traceability
-- Policy citations
-- Execution tracing
-- Conservative abstention behavior
-- FastAPI
-- Streamlit
+The current deployment intentionally prioritizes reliability and low-resource operation over heavyweight model inference.
 
-The current implementation emphasizes explainability and evidence sufficiency rather than unsupported automation.
+---
 
-It is intended to help a claims reviewer organize relevant policy evidence, identify missing information, and understand why a claim has been routed for further review.
+## Repository
+
+GitHub:
+
+[https://github.com/smruti-518/aptino-claim-engine]
+---
+
+## Summary
+
+The Aptino Claim Engine demonstrates an end-to-end AI-assisted insurance claim assessment workflow:
+
+```text
+Policy PDF
+    ↓
+Policy ingestion
+    ↓
+Policy chunking
+    ↓
+BM25 retrieval
+    ↓
+Specialized agents
+    ↓
+Decision aggregation
+    ↓
+Rule-based evaluation
+    ↓
+Expense calculation
+    ↓
+FastAPI
+    ↓
+Streamlit
+```
+
+The resulting system provides an explainable claim-review workflow with policy evidence, agent-level reasoning, deterministic rule checks, expense calculations, confidence information, and execution tracing.
+
+The application is deployed as a live Streamlit frontend backed by a FastAPI service running on Render.
