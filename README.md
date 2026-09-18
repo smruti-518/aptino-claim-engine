@@ -6,7 +6,12 @@ The system is designed as a conservative decision-support tool. When the availab
 
 > This system is an assessment aid and does not replace a qualified claims examiner.
 
----
+
+## Live Demo
+
+- **Frontend (Streamlit):** https://aptino-claim-engine-7qrsyaknhcixwfs5otwryq.streamlit.app/
+- **Backend API (Render):** https://aptino-claim-engine-38n8.onrender.com
+
 
 ## 1. Project Overview
 
