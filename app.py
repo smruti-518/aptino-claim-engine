@@ -5,7 +5,10 @@ from src.claim_engine.evaluation.public_case_rules import evaluate_public_case
 from src.claim_engine.evaluation.expense_calculator import calculate_expenses
 
 
-API_URL = "http://127.0.0.1:8000/analyze"
+API_URL = os.getenv(
+    "API_URL",
+    "http://127.0.0.1:8000/analyze",
+)
 
 st.set_page_config(
     page_title="Aptino Claim Decision Engine",
